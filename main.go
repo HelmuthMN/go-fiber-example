@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/HelmuthMN/go-fiber-example/database"
+	"github.com/HelmuthMN/go-fiber-example/router"
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -12,9 +13,7 @@ func main() {
 	// Connection to the Database
 	database.ConnectDB()
 
-	app.Get("/", func(c *fiber.Ctx) error {
-		err := c.SendString("Testing air")
-		return err
-	})
+	// Setup the router
+	router.SetupRoutes(app)
 	app.Listen(":3000")
 }
