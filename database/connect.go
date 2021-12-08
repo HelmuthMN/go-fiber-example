@@ -6,6 +6,7 @@ import (
 	"strconv"
 
 	"github.com/HelmuthMN/go-fiber-example/config"
+	"github.com/HelmuthMN/go-fiber-example/internal/model"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -33,4 +34,8 @@ func ConnectDB() {
 	}
 
 	fmt.Println("Connection Opened to Database")
+
+	// Migrate the database
+	DB.AutoMigrate(&model.Note{})
+	fmt.Println("Database Migrated.")
 }
