@@ -2,14 +2,25 @@ package noteHandler
 
 import (
 	"github.com/HelmuthMN/go-fiber-example/database"
-	"github.com/HelmuthMN/go-fiber-example/internal/model"
+	"github.com/HelmuthMN/go-fiber-example/internal/models"
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
 )
 
+type Note struct {
+	ID       uuid.UUID `json:"id"`
+	Title    string    `json:"title"`
+	SubTitle string    `json:"sub_title"`
+	Text     string    `json:"text"`
+}
+
+func createNoteResponse(noteModel models.Note) Note {
+	return Note{ID: noteModel.ID, Title: noteModel.Title, SubTitle: noteModel.SubTitle, Text: noteModel.Text}
+}
+
 func GetNotes(c *fiber.Ctx) error {
 	db := database.DB
-	var notes []model.Note
+	notes := []models.Note{}
 
 	// find all notes in the database
 	db.Find(&notes)
@@ -20,16 +31,20 @@ func GetNotes(c *fiber.Ctx) error {
 		return c.Status(404).JSON(fiber.Map{"status": "error", "message": "No notes present", "data": nil})
 	}
 
-	// Else return notes
-	return c.JSON(fiber.Map{"status": "success", "message": "Notes Found", "data": notes})
+	responseNotes := []Note{}
+	for _, note := range notes {
+		responseNote := createNoteResponse(note)
+		responseNotes = append(responseNotes, responseNote)
+	}
+	return c.Status(200).JSON(responseNotes)
 }
 
 func CreateNotes(c *fiber.Ctx) error {
 	db := database.DB
-	note := new(model.Note)
+	var note models.Note
 
 	// Store the body in the note and return error if encountered
-	err := c.BodyParser(note)
+	err := c.BodyParser(&note)
 	if err != nil {
 		return c.Status(500).JSON(fiber.Map{"status": "error", "message": "Review your input", "data": err})
 	}
@@ -42,13 +57,15 @@ func CreateNotes(c *fiber.Ctx) error {
 		return c.Status(500).JSON(fiber.Map{"status": "error", "message": "Could not create note", "data": err})
 	}
 
+	responseNote := createNoteResponse(note)
+	return c.Status(200).JSON(responseNote)
 	// Return the created note
-	return c.JSON(fiber.Map{"status": "success", "message": "Note Created", "data": note})
+	// return c.JSON(fiber.Map{"status": "success", "message": "Note Created", "data": note})
 }
 
 func GetNote(c *fiber.Ctx) error {
 	db := database.DB
-	var note model.Note
+	var note models.Note
 
 	// Read the param noteID
 	id := c.Params("noteId")
@@ -59,20 +76,21 @@ func GetNote(c *fiber.Ctx) error {
 	if note.ID == uuid.Nil {
 		return c.Status(404).JSON(fiber.Map{"status": "error", "message": "No note present", "data": nil})
 	}
+	responseNote := createNoteResponse(note)
 
-	// Else return notes
-	return c.JSON(fiber.Map{"status": "success", "message": "Note Found", "data": note})
+	return c.Status(200).JSON(responseNote)
+	// return c.JSON(fiber.Map{"status": "success", "message": "Note Found", "data": note})
 }
 
 func UpdateNote(c *fiber.Ctx) error {
 	type updateNote struct {
 		Title    string `json:"title"`
 		SubTitle string `json:"sub_title"`
-		Text     string `json:"Text"`
+		Text     string `json:"text"`
 	}
 
 	db := database.DB
-	var note model.Note
+	var note models.Note
 
 	// Read the param noteID
 	id := c.Params("noteId")
@@ -98,14 +116,16 @@ func UpdateNote(c *fiber.Ctx) error {
 
 	// Save changes
 	db.Save(&note)
+	responseNote := createNoteResponse(note)
 
+	return c.Status(200).JSON(responseNote)
 	// Return the updated note
-	return c.JSON(fiber.Map{"status": "success", "message": "Notes Found", "data": note})
+	// return c.JSON(fiber.Map{"status": "success", "message": "Notes Found", "data": note})
 }
 
 func DeleteNote(c *fiber.Ctx) error {
 	db := database.DB
-	var note model.Note
+	var note models.Note
 
 	// Read the param noteId
 	id := c.Params("noteId")

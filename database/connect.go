@@ -6,7 +6,7 @@ import (
 	"strconv"
 
 	"github.com/HelmuthMN/go-fiber-example/config"
-	"github.com/HelmuthMN/go-fiber-example/internal/model"
+	"github.com/HelmuthMN/go-fiber-example/internal/models"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -25,7 +25,7 @@ func ConnectDB() {
 	}
 
 	// Connection URL to connect to Postgres Database
-	dsn := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable", config.Config("DB_HOST"), port, config.Config("DB_USER"), config.Config("DB_PASSWORD"), config.Config("DB_NAME"))
+	dsn := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable TimeZone=America/Sao_Paulo", config.Config("DB_HOST"), port, config.Config("DB_USER"), config.Config("DB_PASSWORD"), config.Config("DB_NAME"))
 	// Connect to the DB and initialize the DB variable
 	DB, err = gorm.Open(postgres.Open(dsn))
 
@@ -36,6 +36,6 @@ func ConnectDB() {
 	fmt.Println("Connection Opened to Database")
 
 	// Migrate the database
-	DB.AutoMigrate(&model.Note{})
+	DB.AutoMigrate(&models.Note{})
 	fmt.Println("Database Migrated.")
 }
