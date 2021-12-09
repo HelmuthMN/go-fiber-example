@@ -12,3 +12,12 @@ type Note struct {
 	SubTitle string
 	Text     string
 }
+
+type User struct {
+	gorm.Model
+	ID uuid.UUID `gorm:"type:uuid"`
+	// ID       uuid.UUID `gor:"uuid.Nype:uuid"`
+	Name     string
+	Email    string `gorm:"unique"`
+	Password []byte
+}
