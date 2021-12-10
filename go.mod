@@ -6,6 +6,7 @@ require (
 	github.com/andybalholm/brotli v1.0.2 // indirect
 	github.com/canthefason/go-watcher v0.2.4 // indirect
 	github.com/cosmtrek/air v1.27.8 // indirect
+	github.com/dgrijalva/jwt-go/v4 v4.0.0-preview1 // indirect
 	github.com/fatih/color v1.13.0 // indirect
 	github.com/fsnotify/fsnotify v1.5.1 // indirect
 	github.com/gofiber/fiber/v2 v2.23.0 // indirect
